@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<title>AEA</title>
+
+<!-- Custom fonts for this template-->
+<link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet"
+	type="text/css">
+<link
+	href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+	rel="stylesheet">
+
+<!-- Custom styles for this template-->
+<link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+<!-- JS for Datetime picker -->
+<link
+	href="http://www.malot.fr/bootstrap-datetimepicker/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css"
+	rel="stylesheet">
+
+
+
+
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<div th:replace="~{includes/navbar :: navbar}" />
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Topbar -->
+				<div th:replace="~{includes/topbar :: topbar}" />
+				<!-- End of Topbar -->
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+				
+				<div th:if="${param.errorMsg}" class="alert alert-danger"
+						th:text="${param.errorMsg}"></div>
+					<div th:if="${param.warningMsg}" class="alert alert-warning"
+						th:text="${param.warningMsg}"></div>
+					<div th:if="${param.infoMsg}" class="alert alert-info"
+						th:text="${param.infoMsg}"></div>
+
+					<!-- Page Heading -->
+					<h1 class="h3 mb-4 text-gray-800" th:text="${pageTitle}"></h1>
+
+					<div class="row">
+
+						<div class="col-lg-6">
+							<form
+								th:action="@{${isQuiz != null ? '/newQuiz' : '/newSurvey'}}"
+								method="post">
+								<!-- Circle Buttons -->
+								<div class="card shadow mb-4">
+									<div class="card-header py-3">
+										<h6 class="m-0 font-weight-bold text-primary">Summary</h6>
+									</div>
+									<div class="card-body">
+										<h5>Id</h5>
+										<div class="form-group">
+											<input type="text" class="form-control form-control-user"
+												id="quizId" name="quizId" placeholder="Quiz ID"
+												th:value="${quizId}" readonly>
+										</div>
+										<h5>Name</h5>
+										<div class="form-group">
+											<input type="text" class="form-control form-control-user"
+												id="newName" name="newName" placeholder="Name"
+												th:value="${newName}">
+										</div>
+										<h5>Description</h5>
+										<div class="form-group">
+											<input type="text" class="form-control form-control-user"
+												id="newDesc" name="newDesc" placeholder="Description"
+												th:value="${newDesc}">
+										</div>
+										<h5>Quizmaster</h5>
+										<div class="form-group">
+											<input type="text" class="form-control form-control-user"
+												id="newOwner" name="newOwner" placeholder="Owner"
+												th:value="${newOwner}" readonly>
+										</div>
+										<h5>Start date</h5>
+										<div class="form-group">
+											<input type="text"
+												class="form-control form_datetime"
+												id="newStartDate" name="newStartDate"
+												th:value="${newStartDate}" readonly style="background-color:#FFFFFF !important"
+												data-provide="datepicker form_datetime">
+										</div>
+
+
+										<h5>End date</h5>
+										<div class="form-group">
+											<input type="text"
+												class="form-control form_datetime"
+												id="newEndDate" name="newEndDate"
+												th:value="${newEndDate}" readonly style="background-color:#FFFFFF !important"
+												data-provide="datepicker form_datetime">
+										</div>
+
+
+										<h5>Group</h5>
+										<div class="form-group">
+
+											<select id="newGroup" name="newGroup"
+												class="form-control form-control-user">
+												<option value="-1" th:selected="${newGroup == null}">public</option>
+												<option th:each="group : ${#request.getAttribute('groups')}"
+													th:selected="${newGroup != null && newGroup.id == group.id}"
+													th:text="${group.groupName}" th:value="${group.id}">
+												</option>
+											</select>
+										</div>
+
+										<p></p>
+										<button class="btn btn-lg btn-icon-split btn-block btn-info"
+											type="submit">Save</button>
+									</div>
+
+								</div>
+							</form>
+
+
+							<!-- Tags -->
+							<div class="card shadow mb-4">
+								<div class="card-header py-3">
+									<h6 class="m-0 font-weight-bold text-primary">Tags</h6>
+								</div>
+								<div class="card-body">
+									<div class="row">
+										<div class="form-group"
+											th:each="quizTag, count : ${#request.getAttribute('quizTags')}">
+											<div class="col col-md-auto">
+												<form th:action="@{/deleteQuizTag}" method="post">
+													<input type="hidden" name="quizId" id="quizId"
+														th:value="${quizId}"> <input type="hidden"
+														name="newQuizTag" id="newQuizTag" th:value="${quizTag}">
+													&nbsp;&nbsp;&nbsp;
+													<button class="btn btn-light btn-icon-split" type="submit">
+														<span class="icon text-gray-600"> <i
+															class="fas fa-times"></i>
+														</span> <span class="text" th:text="' ' + ${quizTag}"></span>
+													</button>
+													&nbsp;&nbsp;&nbsp;
+												</form>
+											</div>
+										</div>
+									</div>
+									<form th:action="@{/addQuizTag}" method="post">
+										<div class="row">
+											<div class="col col-9">
+												<input type="hidden" name="quizId" id="quizId"
+													th:value="${quizId}"> <input type="text"
+													data-toggle="tooltip" data-placement="top"
+													title="Add multible tags with the delimiter ',' or ';'"
+													class="form-control form-control-user" id="newQuizTag"
+													th:readonly="${quizId==null}" name="newQuizTag"
+													placeholder="Tag">
+											</div>
+											<div class="col col-3">
+
+												<button class="btn btn-lg btn-icon-split btn-block btn-info"
+													th:disabled="${quizId==null}" type="submit">Add
+													Tag</button>
+											</div>
+										</div>
+										<p></p>
+									</form>
+
+								</div>
+
+							</div>
+
+
+
+
+
+
+						</div>
+
+						<div class="col-lg-6">
+
+							<div class="card shadow mb-4"
+								th:if="${questions != null && #lists.size(questions) > 0}">
+								<div class="card-header py-3">
+									<h6 class="m-0 font-weight-bold text-primary">Questions</h6>
+								</div>
+								<div class="card-body">
+									<div th:if="${questions}"
+										th:each="question, count : ${#request.getAttribute('questions')}">
+										<h5 th:text="'Question ' + ${count.count}"></h5>
+										<p>
+											<b th:text="${question.questionText}"></b>
+										</p>
+
+										<div th:if="${question.answerList}" class="row"
+											th:each="answer, count : ${question.answerList}">
+											<div class="col"
+												th:classappend="${isQuiz != null} ? col-10 : col-11">
+												<p
+													th:text="'Answer ' + ${count.count} + ': ' + ${answer.answerText}"></p>
+											</div>
+											<div class="col col-1" th:if="${isQuiz != null}">
+												<form th:action="@{/toggleAnswerCorrectness}" method="post">
+													<input type="hidden" name="quizId" id="quizId"
+														th:value="${quizId}"> <input type="hidden"
+														name="newAnswerId" id="newAnswerId"
+														th:value="${answer.id}">
+													<button class="btn btn-lg btn-block btn-icon-split"
+														th:classappend="${answer.correct} ? btn-success : btn-danger"
+														type="submit" data-toggle="tooltip" data-placement="top"
+														title="Toggle correctness">
+														<span class="fas"
+															th:classappend="${answer.correct} ? fa-check : fa-times"></span>
+													</button>
+												</form>
+											</div>
+											<div class="col col-1">
+												<form th:action="@{/deleteAnswer}" method="post">
+													<input type="hidden" name="quizId" id="quizId"
+														th:value="${quizId}"> <input type="hidden"
+														name="newAnswerId" id="newAnswerId"
+														th:value="${answer.id}">
+													<button
+														class="btn btn-lg btn-icon-split btn-block btn-danger"
+														type="submit" data-toggle="tooltip" data-placement="top"
+														title="Delete answer">
+														<span class="fas fa-trash"></span>
+													</button>
+												</form>
+											</div>
+										</div>
+
+										<form th:action="@{/addAnswer}" method="post">
+											<div class="row">
+												<div class="col"
+													th:classappend="${isQuiz != null} ? col-8 : col-9">
+													<input type="hidden" name="newQuestionId"
+														id="newQuestionId" th:value="${question.id}"> <input
+														type="hidden" name="isQuiz" id="isQuiz"
+														th:value="${isQuiz}"> <input type="text"
+														class="form-control form-control-user" id="newAnswerText"
+														name="newAnswerText" placeholder="Answer"
+														th:value="${newAnswerText}">
+												</div>
+												<div class="col col-1" th:if="${isQuiz != null}">
+													<input type="checkbox" data-toggle="tooltip"
+														data-placement="top" title="Is the answer correct?"
+														class="form-control form-control-user"
+														id="newAnswerIsCorrect" name="newAnswerIsCorrect"
+														th:value="${newAnswerIsCorrect}">
+												</div>
+												<div class="col col-3">
+
+													<button
+														class="btn btn-lg btn-icon-split btn-block btn-info"
+														type="submit">Add Answer</button>
+												</div>
+											</div>
+											<p></p>
+										</form>
+
+									</div>
+
+
+								</div>
+							</div>
+
+							<div class="card shadow mb-4">
+								<div class="card-header py-3">
+									<h6 class="m-0 font-weight-bold text-primary">Add question</h6>
+								</div>
+								<div class="card-body">
+									<form th:action="@{/addQuestion}" method="post">
+										<input type="hidden" name="quizId" id="quizId"
+											th:value="${quizId}"> <input type="hidden"
+											name="isQuiz" id="isQuiz" th:value="${isQuiz}"> <input
+											type="text" class="form-control form-control-user"
+											id="newQuestionText" name="newQuestionText"
+											th:readonly="${quizId==null}" placeholder="Question"
+											th:value="${newQuestionText}">
+										<p></p>
+										<button class="btn btn-lg btn-info btn-block" type="submit"
+											th:disabled="${quizId==null}">Add question</button>
+									</form>
+
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+				<!-- /.container-fluid -->
+
+			</div>
+			<!-- End of Main Content -->
+
+			<!-- Footer -->
+			<div th:replace="~{includes/footer :: footer}" />
+			<!-- End of Footer -->
+
+		</div>
+		<!-- End of Content Wrapper -->
+
+	</div>
+	<!-- End of Page Wrapper -->
+
+	<!-- Scroll to Top Button-->
+	<a class="scroll-to-top rounded" href="#page-top"> <i
+		class="fas fa-angle-up"></i>
+	</a>
+
+	<!-- Logout Modal-->
+	<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+					<button class="close" type="button" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">Select "Logout" below if you are ready
+					to end your current session.</div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" type="button"
+						data-dismiss="modal">Cancel</button>
+					<a class="btn btn-info" href="logout">Logout</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bootstrap core JavaScript-->
+	<script src="vendor/jquery/jquery.min.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Core plugin JavaScript-->
+	<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script src="js/sb-admin-2.min.js"></script>
+
+	<script type="text/javascript"
+		src="http://www.malot.fr/bootstrap-datetimepicker/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+
+	<script>
+		$(function() {
+			$(".form_datetime").datetimepicker({
+				format : "dd.mm.yyyy",
+				autoclose : true,
+				todayBtn : true,
+				pickerPosition : "bottom-left",
+				minView : 2
+			});
+		});
+	</script>
+</body>
+
+</html>
