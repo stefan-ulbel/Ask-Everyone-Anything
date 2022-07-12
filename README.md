@@ -76,5 +76,5 @@ To enable admin functions login with `admin`.
 All users including the admin have the password `ima17`.
 Available username: `user`, `BlauenKrausler`
 
-Security
+
 Not maintained regarding security issues.
